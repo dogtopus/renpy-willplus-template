@@ -257,3 +257,37 @@ init python:
 ## by a slash.
 
 # define build.itch_project = "renpytom/test-project"
+
+
+## WillPlus ADV-specific settings ##############################################
+##
+## Optional features specific to WillPlus ADV emulation.
+
+init offset = -2
+
+## LL-specific: Enable alignment gem indicator support.
+
+define willplus.enable_gem = False
+
+## Set battle system type (None, pw, sen, ...) (TODO)
+
+# define willplus.battle = None
+
+## Define extra sound channels
+
+define willplus.extra_se_channels = []
+
+## Changes how renpy finds music, sound and voice files. Note that for some
+## reason WillPlus SE (sound) symbols have file suffixes appended so sound
+## effects need to be referenced with the full filename including the suffix.
+## Also audio channel is not affected so references to UI sounds, etc. still
+## need to be done using paths.
+
+define willplus.bgm_suffix = '.OGG'
+define willplus.se_suffix = ''
+define willplus.voice_suffix = '.OGG'
+define willplus.bgm_prefix = 'Bgm/'
+define willplus.se_prefix = 'Se/'
+define willplus.voice_prefix = 'Voice/'
+
+init offset = 0

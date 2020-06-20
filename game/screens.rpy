@@ -2,6 +2,10 @@
 ## Initialization
 ################################################################################
 
+init -1 python:
+    if willplus.enable_gem:
+        renpy.load_module('Riopy/system/game_specific/gem')
+
 init offset = -1
 
 # Hentai flag (show hentai by default)
@@ -115,11 +119,12 @@ screen say(who, what):
 
         text what id "what"
 
-    # LL specific: display gem indicator in the say box (Riopy/system/game_specific/gem.rpy)
-    #window:
-    #    id "gem_indicator"
-    #    background None
-    #    add CurrentGemIndicator() xalign 1.0
+    # LL specific: display gem indicator in the say box (Riopy/system/game_specific/gem.rpym)
+    if willplus.enable_gem:
+        window:
+            id "gem_indicator"
+            background None
+            add CurrentGemIndicator() xalign 1.0
 
     ## If there's a side image, display it above the text. Do not display on the
     ## phone variant - there's no room.
