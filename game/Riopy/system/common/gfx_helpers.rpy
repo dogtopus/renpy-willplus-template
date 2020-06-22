@@ -127,3 +127,12 @@ transform WillXRotateProto(duration, sign, new_widget, old_widget):
 init python:
     def WillXRotate(duration, new_dir_cw=False):
         return WillXRotateProto(duration, -1 if new_dir_cw else 1)
+
+# im
+init python:
+    def WillImTint(image, index):
+        image_ref = resolve_image(image)
+        rgb = willplus.tint_table.get(index, None)
+        if rgb is None:
+            return image_ref
+        return im.MatrixColor(image_ref, im.matrix.tint(*rgb))
