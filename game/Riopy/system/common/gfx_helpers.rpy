@@ -132,7 +132,13 @@ init python:
 init python:
     def WillImTint(image, index):
         image_ref = resolve_image(image)
-        rgb = willplus.tint_table.get(index, None)
+        rgb = willplus.tint_table.get(index)
         if rgb is None:
             return image_ref
         return im.MatrixColor(image_ref, im.matrix.tint(*rgb))
+
+    def WillTintTable(index):
+        rgb = willplus.tint_table.get(index)
+        if rgb is None:
+            return None
+        return im.matrix.tint(*rgb)
