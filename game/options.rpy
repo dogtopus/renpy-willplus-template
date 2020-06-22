@@ -292,4 +292,9 @@ define willplus.bgm_prefix = 'Bgm/'
 define willplus.se_prefix = 'Se/'
 define willplus.voice_prefix = 'Voice/'
 
+## Tint table for character images.
+## {index: (r, g, b), ...}
+
+define willplus.tint_table = {}
+
 init offset = 0
