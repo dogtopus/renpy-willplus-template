@@ -132,6 +132,49 @@ transform WillOD2ZIWID2N(mask, duration, new_widget, old_widget):
         zoom 1.0 align (0.5, 0.5) alpha 1.0
         ease duration zoom 3.0 alpha 0.0
 
+transform WillDitheredDissolveAlpha(unit):
+    '#ffffff00'
+    pause unit
+    'masks/gray5.webp'
+    pause unit
+    'masks/gray10.webp'
+    pause unit
+    'masks/gray15.webp'
+    pause unit
+    'masks/gray20.webp'
+    pause unit
+    'masks/gray25.webp'
+    pause unit
+    'masks/gray30.webp'
+    pause unit
+    'masks/gray35.webp'
+    pause unit
+    'masks/gray40.webp'
+    pause unit
+    'masks/gray45.webp'
+    pause unit
+    'masks/gray50.webp'
+    pause unit
+    'masks/gray55.webp'
+    pause unit
+    'masks/gray60.webp'
+    pause unit
+    'masks/gray65.webp'
+    pause unit
+    'masks/gray70.webp'
+    pause unit
+    'masks/gray75.webp'
+    pause unit
+    'masks/gray80.webp'
+    pause unit
+    'masks/gray85.webp'
+    pause unit
+    'masks/gray90.webp'
+    pause unit
+    'masks/gray95.webp'
+    pause unit
+    'bg WHITE'
+
 #transform WillFadeOutNoLeadIn(duration, new_widget, old_widget):
 #    delay duration
 #    contains:
@@ -149,8 +192,13 @@ transform WillOD2ZIWID2N(mask, duration, new_widget, old_widget):
 #        ease (duration / 2) alpha 0.0
 
 init python:
+    # Cross-rotation
     def WillXRotate(duration, new_dir_cw=False):
         return WillXRotateProto(duration, -1 if new_dir_cw else 1)
+
+    # Dithered dissolve
+    def WillDitheredDissolve(duration):
+        return AlphaDissolve(WillDitheredDissolveAlpha(duration / 20.0), duration)
 
 # im
 init python:
