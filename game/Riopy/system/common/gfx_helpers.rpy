@@ -7,6 +7,35 @@ init python:
             image = renpy.get_registered_image(image)
         return image
 
+    # Similar to https://www.renpy.org/wiki/renpy/doc/cookbook/Shake_effect but works as ATL property control function
+    class Shake2Driver(object):
+        def __init__(self, duration, xdist=0, ydist=0, frame_unit=0.016):
+            self._duration = duration
+            self._xdist = xdist
+            self._ydist = ydist
+            self._oxoffset = None
+            self._oyoffset = None
+            self._fu = frame_unit
+
+        def __call__(self, trans, st, _at):
+            # Transform expires
+            if st >= self._duration:
+                # Home and reset
+                trans.xoffset = self._oxoffset
+                trans.yoffset = self._oyoffset
+                self._oxoffset = None
+                self._oyoffset = None
+                return None
+            # Populate the original offsets
+            if self._oxoffset is None:
+                self._oxoffset = trans.xoffset
+            if self._oyoffset is None:
+                self._oyoffset = trans.yoffset
+            # Do transition
+            trans.xoffset = (self._oxoffset or 0) + (1.0-st/self._duration) * self._xdist * (renpy.random.random()*2-1)
+            trans.yoffset = (self._oyoffset or 0) + (1.0-st/self._duration) * self._ydist * (renpy.random.random()*2-1)
+            return self._fu
+
     # Used by op2rpy to simulate the shake screen effect.
     def WillScreenShake(duration, magnitude, **properties):
         return Shake((0, 0, 0, 0), duration*0.2, dist=magnitude*5)
@@ -62,6 +91,30 @@ init python:
     def WillWipeCheckboard(duration):
         return ImageDissolve('masks/vwipe_cb.webp', duration, 1)
 
+    def WillWipeInterlace(duration, mode='horizontal'):
+        if mode == 'horizontal':
+            return ImageDissolve('masks/hwipe_interlace.webp', duration, ramplen=1)
+        elif mode == 'vertical':
+            return ImageDissolve('masks/vwipe_interlace.webp', duration, ramplen=1)
+        else:
+            raise ValueError('Unknown mode {}'.format(mode))
+
+    # Dissolve to white out
+    # TODO the original one does image dissolve only half way but both ATL and MultipleTransition-based concatenation don't work.
+    def WillImageDissolveToWhiteOut(image, duration, reverse=False):
+        return ComposeTransition(
+            WillImageDissolve(image, duration, reverse=reverse),
+            after=WillFadeOutNoLeadIn(duration)
+        )
+
+    # Cross-rotation
+    def WillXRotate(duration, new_dir_cw=False):
+        return WillXRotateProto(duration, -1 if new_dir_cw else 1)
+
+    # Dithered dissolve
+    def WillDitheredDissolve(duration):
+        return AlphaDissolve(WillDitheredDissolveAlpha(duration / 20.0), duration)
+
 # ATL transitions (see https://lemmasoft.renai.us/forums/viewtopic.php?f=32&t=14678)
 # Dissolving to a new image that is zooming out
 transform WillDissolveToZoomOut(duration, new_widget, old_widget):
@@ -100,6 +153,7 @@ transform WillFadeOut(duration, new_widget, old_widget):
         ease (duration / 2) alpha 0.8
         ease (duration / 2) alpha 0.0
 
+# Cross-rotate prototype transform.
 transform WillXRotateProto(duration, sign, new_widget, old_widget):
     delay duration
     contains:
@@ -175,33 +229,25 @@ transform WillDitheredDissolveAlpha(unit):
     pause unit
     'bg WHITE'
 
-#transform WillFadeOutNoLeadIn(duration, new_widget, old_widget):
-#    delay duration
-#    contains:
-#        old_widget
-#    contains:
-#        new_widget
-#        alpha 0.5
-#        time (duration / 2)
-#        linear (duration / 2) alpha 1.0
-#    # Top white layer
-#    contains:
-#        "#fff"
-#        alpha 0.8
-#        time (duration / 2)
-#        ease (duration / 2) alpha 0.0
-
-init python:
-    # Cross-rotation
-    def WillXRotate(duration, new_dir_cw=False):
-        return WillXRotateProto(duration, -1 if new_dir_cw else 1)
-
-    # Dithered dissolve
-    def WillDitheredDissolve(duration):
-        return AlphaDissolve(WillDitheredDissolveAlpha(duration / 20.0), duration)
+transform WillFadeOutNoLeadIn(duration, new_widget, old_widget):
+    delay duration
+    contains:
+        old_widget
+    contains:
+        new_widget
+        alpha 0.5
+        time (duration / 2)
+        linear (duration / 2) alpha 1.0
+    # Top white layer
+    contains:
+        "#fff"
+        alpha 0.8
+        time (duration / 2)
+        ease (duration / 2) alpha 0.0
 
 # im
 init python:
+    # Wrapper that adds tint effect for image displayables. Use with `show expression`.
     def WillImTint(image, index):
         image_ref = resolve_image(image)
         rgb = willplus.tint_table.get(index)
@@ -209,6 +255,7 @@ init python:
             return image_ref
         return im.MatrixColor(image_ref, im.matrix.tint(*rgb))
 
+    # Only resolve tint table entry. Use with the new `matrixcolor` ATL property.
     def WillTintTable(index):
         rgb = willplus.tint_table.get(index)
         if rgb is None:
