@@ -260,4 +260,4 @@ init python:
         rgb = willplus.tint_table.get(index)
         if rgb is None:
             return None
-        return im.matrix.tint(*rgb)
+        return TintMatrix(*rgb)
