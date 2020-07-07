@@ -115,6 +115,16 @@ init python:
     def WillDitheredDissolve(duration):
         return AlphaDissolve(WillDitheredDissolveAlpha(duration / 20.0), duration)
 
+    # Wave
+    # TODO not tested since all ATL transitions seem broken as of gb62fb01
+    def WillWave(duration, mode='vertical'):
+        if mode == 'vertical':
+            return WillVWaveProto(duration)
+        elif mode == 'horizontal':
+            return WillHWaveProto(duration)
+        else:
+            raise ValueError('Unknown mode {}'.format(mode))
+
 # ATL transitions (see https://lemmasoft.renai.us/forums/viewtopic.php?f=32&t=14678)
 # Dissolving to a new image that is zooming out
 transform WillDissolveToZoomOut(duration, new_widget, old_widget):
@@ -185,6 +195,63 @@ transform WillOD2ZIWID2N(mask, duration, new_widget, old_widget):
         old_widget
         zoom 1.0 align (0.5, 0.5) alpha 1.0
         ease duration zoom 3.0 alpha 0.0
+
+transform WillWaveProto(xamplitude=-1, xphase=0.0, xwavelength=1.0, yamplitude=-1, yphase=0.0, ywavelength=1.0):
+    shader "willplus.wave"
+    u_willplus_wave_xamplitude xamplitude
+    u_willplus_wave_xphase xphase
+    u_willplus_wave_xwavelength xwavelength
+    u_willplus_wave_yamplitude yamplitude
+    u_willplus_wave_yphase yphase
+    u_willplus_wave_ywavelength ywavelength
+
+transform WillVWaveProto(duration, new_widget, old_widget):
+    delay duration
+    contains:
+        old_widget
+        mesh True
+        WillWaveProto(xamplitude=0.0, xwavelength=0.25)
+        parallel:
+            linear (duration / 2) u_willplus_wave_xamplitude 0.25
+            linear (duration / 2) u_willplus_wave_xamplitude 0.0
+            u_willplus_wave_xamplitude -1
+        parallel:
+            linear (duration) u_willplus_wave_xphase 720
+    contains:
+        new_widget
+        mesh True
+        WillWaveProto(xamplitude=0.0, xwavelength=0.25)
+        parallel:
+            linear (duration / 2) u_willplus_wave_xamplitude 0.25
+            linear (duration / 2) u_willplus_wave_xamplitude 0.0
+            u_willplus_wave_xamplitude -1
+        parallel:
+            alpha 0.0
+            linear (duration) u_willplus_wave_xphase 720 alpha 1.0
+
+transform WillHWaveProto(duration, new_widget, old_widget):
+    delay duration
+    contains:
+        old_widget
+        mesh True
+        WillWaveProto(yamplitude=0.0, ywavelength=0.25)
+        parallel:
+            linear (duration / 2) u_willplus_wave_yamplitude 0.25
+            linear (duration / 2) u_willplus_wave_yamplitude 0.0
+            u_willplus_wave_yamplitude -1
+        parallel:
+            linear (duration) u_willplus_wave_yphase 720
+    contains:
+        new_widget
+        mesh True
+        WillWaveProto(yamplitude=0.0, ywavelength=0.25)
+        parallel:
+            linear (duration / 2) u_willplus_wave_yamplitude 0.25
+            linear (duration / 2) u_willplus_wave_yamplitude 0.0
+            u_willplus_wave_yamplitude -1
+        parallel:
+            alpha 0.0
+            linear (duration) u_willplus_wave_yphase 720 alpha 1.0
 
 transform WillDitheredDissolveAlpha(unit):
     '#ffffff00'
