@@ -68,3 +68,14 @@ transform WillHWaveProto(duration, new_widget, old_widget):
         parallel:
             alpha 0.0
             linear (duration) u_willplus_wave_yphase 720 alpha 1.0
+
+transform WillStretch(duration, new_widget, old_widget):
+    delay duration
+    old_widget
+    mesh True
+    WillWaveProto(xamplitude=0.0, xwavelength=0.001)
+    linear (duration / 2) u_willplus_wave_xamplitude 0.3 u_willplus_wave_xphase 360000
+    new_widget
+    mesh True
+    linear (duration / 2) u_willplus_wave_xamplitude 0.0 u_willplus_wave_xphase 0
+    u_willplus_wave_xamplitude -1
