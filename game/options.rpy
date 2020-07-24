@@ -297,4 +297,13 @@ define willplus.voice_prefix = 'Voice/'
 
 define willplus.tint_table = {}
 
+init offset = -999
+
+## Disable revision check for gfx-next loading condition. Useful when running on
+## local builds without the revision value properly set. Note that it's the
+## user's responsibility to ensure the correct revision is used or otherwise the
+## game will crash.
+
+define willplus.gfx_next_ignore_revision = False
+
 init offset = 0

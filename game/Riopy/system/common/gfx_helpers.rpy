@@ -19,7 +19,7 @@ init python:
 
         def __call__(self, trans, st, _at):
             # Transform expires
-            if st >= self._duration:
+            if self._duration is not None and st >= self._duration:
                 # Home and reset
                 trans.xoffset = self._oxoffset
                 trans.yoffset = self._oyoffset
@@ -32,13 +32,13 @@ init python:
             if self._oyoffset is None:
                 self._oyoffset = trans.yoffset
             # Do transition
-            trans.xoffset = (self._oxoffset or 0) + (1.0-st/self._duration) * self._xdist * (renpy.random.random()*2-1)
-            trans.yoffset = (self._oyoffset or 0) + (1.0-st/self._duration) * self._ydist * (renpy.random.random()*2-1)
+            slow_stop_modifier = 1.0 if self._duration is None else (1.0 - st / self._duration)
+            trans.xoffset = (self._oxoffset or 0) + slow_stop_modifier * self._xdist * (renpy.random.random()*2-1)
+            trans.yoffset = (self._oyoffset or 0) + slow_stop_modifier * self._ydist * (renpy.random.random()*2-1)
             return self._fu
 
-    # Used by op2rpy to simulate the shake screen effect.
-    def WillScreenShake(duration, magnitude, **properties):
-        return Shake((0, 0, 0, 0), duration*0.2, dist=magnitude*5)
+    def WillShakeDriverIndefinite(magnitude, **properties):
+        return Shake2Driver(None, xdist=magnitude*5, ydist=magnitude*5)
 
     # Thunk for ImageDissolve() that "simulates" mask_blend{,_r} in a more compact form
     def WillImageDissolve(image, duration, reverse=False):
@@ -116,6 +116,12 @@ init python:
         return AlphaDissolve(WillDitheredDissolveAlpha(duration / 20.0), duration)
 
 # ATL transitions (see https://lemmasoft.renai.us/forums/viewtopic.php?f=32&t=14678)
+# Screen shake transition
+transform WillScreenShake(duration, magnitude, new_widget, old_widget):
+    delay duration*0.2
+    new_widget
+    function Shake2Driver(duration*0.2, xdist=magnitude*5, ydist=magnitude*5)
+
 # Dissolving to a new image that is zooming out
 transform WillDissolveToZoomOut(duration, new_widget, old_widget):
     # Set delay for transitioning
@@ -262,7 +268,10 @@ init python:
             return None
         return TintMatrix(Color(rgb=rgb))
 
-init python:
+init python hide:
     # g07f2fdf or later only for mesh and shader ATL property.
-    if renpy.version_tuple >= (7, 4, 0, 558):
+    min_ver = (7, 4, 0, 558)
+    min_ver_norev = min_ver[:-1] + (0, )
+    min_ver_actual = min_ver_norev if willplus.gfx_next_ignore_revision else min_ver
+    if renpy.version_tuple >= min_ver_actual:
         renpy.load_module('Riopy/system/common/gfx_helpers.next')
