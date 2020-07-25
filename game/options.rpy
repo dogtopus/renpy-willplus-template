@@ -292,10 +292,25 @@ define willplus.bgm_prefix = 'Bgm/'
 define willplus.se_prefix = 'Se/'
 define willplus.voice_prefix = 'Voice/'
 
-## Tint table for character images.
+## Tint table for character images. May vary engine-to-engine.
 ## {index: (r, g, b), ...}
 
-define willplus.tint_table = {}
+define willplus.tint_table = {
+    ## Note that these values are just approximations/plausible alternatives.
+    ## They are not RGB-perfect in anyway.
+
+    ## Warm environments
+    1: (1.1, 1.0, 1.0),
+    2: (1.15, 1.0, 1.0),
+
+    ## Cold/low light environments
+    3: (0.9, 0.9, 0.9),
+    4: (0.75, 0.75, 0.8),
+
+    ## LL-specific: collapsing world (significantly redder hue than the 2 warm
+    ## tints)
+    5: (1.33, 1.0, 1.0),
+}
 
 init offset = -999
 
