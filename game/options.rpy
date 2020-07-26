@@ -312,6 +312,20 @@ define willplus.tint_table = {
     5: (1.33, 1.0, 1.0),
 }
 
+## Replay HLE
+
+## Flag that stores the current replay id
+
+define willplus.replay_index_ref = 'current_event_id'
+
+## # of replays
+
+define willplus.replay_index_max = 0
+
+## Replay flag base address
+
+define willplus.replay_flag_array_base = 'unlock_event_0'
+
 init offset = -999
 
 ## Disable revision check for gfx-next loading condition. Useful when running on
