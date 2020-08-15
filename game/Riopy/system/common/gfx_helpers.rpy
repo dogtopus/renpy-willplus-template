@@ -251,6 +251,10 @@ transform WillFadeOutNoLeadIn(duration, new_widget, old_widget):
         time (duration / 2)
         ease (duration / 2) alpha 0.0
 
+transform abspos(x, y):
+    reset
+    pos (x, y)
+
 # im
 init python:
     # Wrapper that adds tint effect for image displayables. Use with `show expression`.
