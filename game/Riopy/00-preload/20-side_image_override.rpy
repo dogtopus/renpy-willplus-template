@@ -16,7 +16,7 @@ python early:
     def lint_will_side(o):
         image = o
         if image is not None and renpy.get_registered_image(image) is None:
-            renpy.error('Cannot find image {}.'.format(repr(image)))
+            renpy.error('{} is not an image.'.format(repr(str(image))))
 
     def predict_will_side(o):
         image = o
