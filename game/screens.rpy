@@ -4,7 +4,7 @@
 
 init -1 python:
     if willplus.enable_gem:
-        renpy.load_module('Riopy/system/game_specific/gem')
+        renpy.load_module('Riopy/system/common/gem')
 
 init offset = -1
 
@@ -119,7 +119,7 @@ screen say(who, what):
 
         text what id "what"
 
-    # LL specific: display gem indicator in the say box (Riopy/system/game_specific/gem.rpym)
+    # LL specific: display gem indicator in the say box (Riopy/system/common/gem.rpym)
     if willplus.enable_gem:
         window:
             id "gem_indicator"
