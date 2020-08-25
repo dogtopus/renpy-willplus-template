@@ -1,2 +1,0 @@
-python early:
-    pass

@@ -327,9 +327,9 @@ define willplus.replay_index_ref = 'current_event_id'
 
 define willplus.replay_index_max = 0
 
-## Replay flag base address
+## Replay BGM store base address
 
-define willplus.replay_flag_array_base = 'unlock_event_0'
+define willplus.replay_bgm_store = 'replay_bgm_store'
 
 init offset = -999
 
