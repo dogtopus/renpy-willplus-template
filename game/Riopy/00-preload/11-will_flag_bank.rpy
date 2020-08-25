@@ -34,7 +34,11 @@ python early:
             All flags default to False for compatibility with int flags.
             Raises KeyError if attempting to use an undefined flag alias.
             '''
-            addr = self._resolve_flag_addr(key)
+            if isinstance(key, tuple):
+                key, index = key
+            else:
+                index = 0
+            addr = self._resolve_flag_addr(key) + index
             fb = self._resolve_bank_mapping(addr)
             if fb is self:
                 return self._flags.get(addr, False)
@@ -43,7 +47,11 @@ python early:
                 return fb[addr]
 
         def __setitem__(self, key, val):
-            addr = self._resolve_flag_addr(key)
+            if isinstance(key, tuple):
+                key, index = key
+            else:
+                index = 0
+            addr = self._resolve_flag_addr(key) + index
             fb = self._resolve_bank_mapping(addr)
             if fb is self:
                 cb = self._v_on_update_callback.get(addr)
