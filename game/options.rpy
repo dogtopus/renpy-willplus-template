@@ -315,7 +315,7 @@ define willplus.tint_table = {
 ## Music IDs (used by at least replay)
 
 ## {symbol: id, ...}
-define willplus.music_id = {}
+define willplus.music_ids = {}
 
 ## Replay HLE
 
